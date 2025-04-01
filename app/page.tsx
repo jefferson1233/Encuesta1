@@ -1,103 +1,170 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import confetti from "canvas-confetti";
+import { motion, AnimatePresence } from "framer-motion";
+
+const sustancias = [
+  { letra: "a", nombre: "Tabaco (cigarrillos, tabaco de mascar, puros, etc.)" },
+  { letra: "b", nombre: "Bebidas alcohólicas (cerveza, vinos, licores, etc.)" },
+  { letra: "c", nombre: "Cannabis (marihuana, mota, hierba, hachís, etc.)" },
+  { letra: "d", nombre: "Cocaína (coca, crack, etc.)" },
+  { letra: "e", nombre: "Estimulantes de tipo anfetamina (speed, éxtasis, etc.)" },
+  { letra: "f", nombre: "Inhalantes (gasolina, solvente para pintura, etc.)" },
+  { letra: "g", nombre: "Sedantes o pastillas para dormir (diazepam, etc.)" },
+  { letra: "h", nombre: "Alucinógenos (LSD, ácidos, hongos, ketamina, etc.)" },
+  { letra: "i", nombre: "Opiáceos (heroína, morfina, metadona, etc.)" },
+  { letra: "j", nombre: "Otras, especifique:" },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [respuestas, setRespuestas] = useState({});
+  const [otras, setOtras] = useState("");
+  const [mostrarFinal, setMostrarFinal] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleChange = (letra, valor) => {
+    setRespuestas(prev => ({
+      ...prev,
+      [letra]: valor,
+    }));
+  };
+
+  const todasRespondidas = sustancias.every(s => respuestas[s.letra]);
+  const todasNegativas = sustancias.every(s => respuestas[s.letra] === "no");
+
+  useEffect(() => {
+    if (todasRespondidas && todasNegativas && !mostrarFinal) {
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+      });
+      setMostrarFinal(true);
+    }
+  }, [respuestas]);
+
+  return (
+    <>
+      <div className="max-w-3xl mx-auto my-10 bg-white p-8 rounded-2xl shadow-lg">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Prueba de Detección de Consumo de Alcohol, Tabaco y Sustancias
+        </h1>
+
+        <div className="space-y-4 text-gray-700 mb-8">
+          <p>
+            Las siguientes preguntas se refieren a su experiencia sobre el consumo de alcohol, tabaco y otras sustancias a lo largo de la vida y en los últimos tres meses. Estas sustancias se pueden fumar, ingerir, inhalar o inyectar.
+          </p>
+          <p>
+            Aunque también nos interesa conocer las diferentes drogas ilícitas que ha consumido, tenga la seguridad de que esa información será estrictamente confidencial.
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto p-6">
+        <AnimatePresence>
+          {!mostrarFinal ? (
+            <motion.div
+              key="formulario"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+            >
+              <h1 className="text-2xl font-bold mb-4">PREGUNTA 1</h1>
+              <p className="mb-6 text-gray-700">
+                <strong>¿A lo largo de la vida, cuál de las siguientes sustancias ha consumido alguna vez?</strong> (solo las que consumió sin receta médica)
+              </p>
+
+              <form className="space-y-4">
+                {sustancias.map((s) => (
+                  <div key={s.letra} className="flex flex-col md:flex-row md:items-center gap-4">
+                    <label className="md:w-2/3">
+                      <span className="font-medium">{s.letra}. {s.nombre}</span>
+                      {s.letra === "j" && (
+                        <input
+                          type="text"
+                          placeholder="Especifique"
+                          className="mt-1 w-full border rounded p-2"
+                          value={otras}
+                          onChange={(e) => setOtras(e.target.value)}
+                        />
+                      )}
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="radio"
+                          name={s.letra}
+                          value="no"
+                          checked={respuestas[s.letra] === "no"}
+                          onChange={() => handleChange(s.letra, "no")}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                      <label className="inline-flex items-center">
+                        <input
+                          type="radio"
+                          name={s.letra}
+                          value="si"
+                          checked={respuestas[s.letra] === "si"}
+                          onChange={() => handleChange(s.letra, "si")}
+                          className="mr-2"
+                        />
+                        Sí
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </form>
+
+              <div className="mt-8 p-4 bg-blue-100 rounded">
+                {todasNegativas ? (
+                  <p className="text-blue-800 font-semibold">
+                    ❗ Todas las respuestas fueron negativas. Preguntar:
+                    <em> “¿Ni siquiera cuando estaba en la escuela?”</em><br />
+                    Si se mantiene negativa, detenga la entrevista.
+                  </p>
+                ) : (
+                  <p className="text-green-700 font-semibold">
+                    ✅ Se debe hacer la Pregunta 2 para cada sustancia que respondió “Sí”.
+                  </p>
+                )}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="final"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mt-16"
+            >
+              <h2 className="text-3xl font-bold text-green-600 mb-4">🎉 ¡Gracias por responder!</h2>
+              <p className="text-lg text-gray-700">
+                No ha consumido ninguna sustancia. No es necesario continuar la encuesta.
+              </p>
+               <button
+      className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded transition"
+      onClick={(e) => {
+        e.preventDefault();
+        setMostrarFinal(false); // Mostrar formulario otra vez
+      }}
+    >
+      ¿Se equivocó?
+    </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+  
+     
+      </div>
+    </>
   );
 }
+/*
+<pre className="mt-6 bg-gray-100 p-4 rounded text-sm">
+{JSON.stringify(respuestas, null, 2)}
+<br />
+Otras: {JSON.stringify(otras, null, 2)}
+</pre>
+*/
