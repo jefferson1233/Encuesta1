@@ -37,9 +37,10 @@ export default function Pregunta6({ respuestasPregunta1, onSubmit }: Props) {
     setPreocupaciones((prev) => ({ ...prev, [letra]: valor }));
   };
 
+  /*
   const puedeContinuar = sustanciasRespondidas.every(
     (s) => preocupaciones[s.letra] !== undefined
-  );
+  ); */
 
 
   

@@ -39,7 +39,7 @@ export default function Pregunta5({ frecuenciasPregunta2, onSubmit }: Props) {
     setFallos((prev) => ({ ...prev, [letra]: valor }));
   };
 
-  const puedeContinuar = sustanciasConConsumo.every((s) => fallos[s.letra] !== undefined);
+ // const puedeContinuar = sustanciasConConsumo.every((s) => fallos[s.letra] !== undefined);
 
 
 

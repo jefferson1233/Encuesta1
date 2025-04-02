@@ -46,7 +46,7 @@ export default function Pregunta7({ respuestasPregunta1, onSubmit }: Props) {
    }, [intentos, onSubmit]);
  
 
-  const puedeEnviar = sustanciasUsadas.every((s) => intentos[s.letra] !== undefined);
+ // const puedeEnviar = sustanciasUsadas.every((s) => intentos[s.letra] !== undefined);
 
   return (
     <div className="max-w-5xl mx-auto p-6">

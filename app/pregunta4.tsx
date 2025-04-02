@@ -39,7 +39,7 @@ export default function Pregunta4({ frecuenciasPregunta2, onSubmit }: Props) {
     setProblemas((prev) => ({ ...prev, [letra]: valor }));
   };
 
-  const puedeContinuar = sustanciasConConsumo.every((s) => problemas[s.letra] !== undefined);
+  //const puedeContinuar = sustanciasConConsumo.every((s) => problemas[s.letra] !== undefined);
 
   useEffect(() => {
    console.log( Object.values(problemas))
