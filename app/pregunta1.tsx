@@ -16,12 +16,15 @@ const sustancias = [
 ];
 
 type Props = {
-  onSubmit: (respuestas: Record<string, string>) => void;
-  
-};
+    onSubmit: (data: {
+      respuestas: Record<string, string>;
+      otrasTexto: string;
+    }) => void;
+  };
 
 export default function Pregunta1({ onSubmit }: Props) {
   const [respuestas, setRespuestas] = useState<Record<string, string>>({});
+  const [otras, setOtras] = useState("");
 
   const handleChange = (letra: string, valor: string) => {
     setRespuestas((prev) => ({ ...prev, [letra]: valor }));
@@ -34,24 +37,39 @@ export default function Pregunta1({ onSubmit }: Props) {
     if (todasRespondidas) {
       onSubmit(respuestas);
     }
-  }, [respuestas, onSubmit]);  */
+  }, [respuestas, onSubmit]);  
 
   useEffect(() => {
     const alMenosUnaSi = Object.values(respuestas).includes('si');
     const todasRespondidas = sustancias.every((s) => respuestas[s.letra] =='no');
 
     if (alMenosUnaSi || todasRespondidas) {
-      onSubmit(respuestas);
+      onSubmit({
+        respuestas,
+        otrasTexto: respuestas["j"] === "si" ? otras : "",
+      }
+      );
     }
-  }, [respuestas, onSubmit]);
-
+  }, [respuestas,otras, onSubmit]);
+*/
+  useEffect(() => {
+    if (!respuestas || Object.keys(respuestas).length === 0) return;
   
+    const todasRespondidas = sustancias.every((s) => respuestas[s.letra]);
+    const todasNegativas = sustancias.every((s) => respuestas[s.letra] === "no");
+  
+    if (todasRespondidas || Object.values(respuestas).includes('si')) {
+      onSubmit({ respuestas, otrasTexto: otras });
+    }
+  }, [respuestas, otras, onSubmit]);
 
+
+//<div className="max-w-3xl mx-auto p-6">
   return (
 
    
 
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6 ">    
        <h1 className="text-2xl font-bold mb-4">PREGUNTA 1</h1>
     <p className="mb-6 text-gray-700">
       <strong>¿A lo largo de la vida, cuál de las siguientes sustancias ha consumido alguna vez?</strong> (solo las que consumió sin receta médica)
@@ -88,6 +106,17 @@ export default function Pregunta1({ onSubmit }: Props) {
                 />
                 Sí
               </label>
+
+              {s.letra === "j" && respuestas["j"] === "si" && (
+                    <input
+                    type="text"
+                    placeholder="Especifique"
+                    className="mt-2 border rounded p-2 w-full md:w-1/2"
+                    value={otras}
+                    onChange={(e) => setOtras(e.target.value)}
+                    />
+                )}
+
             </div>
           </div>
         ))}

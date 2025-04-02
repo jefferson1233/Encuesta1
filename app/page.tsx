@@ -11,21 +11,83 @@ import Pregunta6 from './pregunta6';
 import Pregunta7 from './pregunta7';
 import Pregunta8 from './pregunta8';
 
+import Resultados from './resultados';
+
+
    // @ts-expect-error
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 
+const rangosPorSustancia: Record<
+  string,
+  { bajo: number; moderado: number }
+> = {
+  a: { bajo: 3, moderado: 26 },  // Tabaco
+  b: { bajo: 10, moderado: 26 }, // Alcohol
+  c: { bajo: 3, moderado: 26 },
+  d: { bajo: 3, moderado: 26 },
+  e: { bajo: 3, moderado: 26 },
+  f: { bajo: 3, moderado: 26 },
+  g: { bajo: 3, moderado: 26 },
+  h: { bajo: 3, moderado: 26 },
+  i: { bajo: 3, moderado: 26 },
+  j: { bajo: 3, moderado: 26 },
+};
+
+type NivelRiesgo = "Bajo" | "Moderado" | "Alto";
+
+type Resultado = {
+  total: number;
+  riesgo: NivelRiesgo;
+};
+
+type ResultadosFinales = Record<string, Resultado>;
+
+
+function calcularPuntajesASSIST(
+  p2: Record<string, number>,
+  p3: Record<string, number>,
+  p4: Record<string, number>,
+  p5: Record<string, number>,
+  p6: Record<string, number>,
+  p7: Record<string, number>
+): ResultadosFinales {
+  const resultados: ResultadosFinales = {};
+
+  for (const letra of Object.keys(p2)) {
+    const incluirP5 = letra !== "a"; // Tabaco no incluye P5
+    const total =
+      (p2[letra] || 0) +
+      (p3[letra] || 0) +
+      (p4[letra] || 0) +
+      (incluirP5 ? (p5[letra] || 0) : 0) +
+      (p6[letra] || 0) +
+      (p7[letra] || 0);
+
+    const { bajo, moderado } = rangosPorSustancia[letra];
+
+    let riesgo: NivelRiesgo = "Bajo";
+    if (total > moderado) riesgo = "Alto";
+    else if (total > bajo) riesgo = "Moderado";
+
+    resultados[letra] = { total, riesgo };
+  }
+
+  return resultados;
+}
+
 
 export default function Page() {
-  const [respuestasP1, setRespuestasP1] = useState<Record<string, string> | null>(null);
-  const [frecuenciasP2, setFrecuenciasP2] = useState<Record<string, number> | null>(null);
-  const [deseosP3, setDeseosP3] = useState<Record<string, number> | null>(null);
-  const [problemasP4, setProblemasP4] = useState<Record<string, number> | null>(null);
-  const [fallosP5, setFallosP5] = useState<Record<string, number> | null>(null);
-  const [preocupacionesP6, setPreocupacionesP6] = useState<Record<string, number> | null>(null);
-  const [intentosP7, setIntentosP7] = useState<Record<string, number> | null>(null);
-  const [respuestaP8, setRespuestaP8] = useState<number | null>(null);
+  const [respuestasP1, setRespuestasP1] = useState<Record<string, string> | null>({});
+  const [frecuenciasP2, setFrecuenciasP2] = useState<Record<string, number> | null>({});
+  const [deseosP3, setDeseosP3] = useState<Record<string, number> | null>({});
+  const [problemasP4, setProblemasP4] = useState<Record<string, number> | null>({});
+  const [fallosP5, setFallosP5] = useState<Record<string, number> | null>({});
+  const [preocupacionesP6, setPreocupacionesP6] = useState<Record<string, number> | null>({});
+  const [intentosP7, setIntentosP7] = useState<Record<string, number> | null>({});
+  const [respuestaP8, setRespuestaP8] = useState<number | null>(0);
   const [saltarP3aP5, setSaltarP3aP5] = useState(false);
+  const [otras, setOtras] = useState<string >("");
 
   const [mostrarFinal, setMostrarFinal] = useState(false);
 
@@ -57,6 +119,16 @@ export default function Page() {
       setMostrarFinal(true);
     }
   }, [ mostrarFinal]);
+
+
+  const resultados = calcularPuntajesASSIST(
+    frecuenciasP2,
+    deseosP3,
+    problemasP4,
+    fallosP5,
+    preocupacionesP6,
+    intentosP7
+  );
 
   //todasRespondidas && todasNegativas &&  todasRespondidas, todasNegativas, const todasRespondidas = sustancias.every((s) => respuestas[s.letra]);
   //const todasNegativas = sustancias.every((s) => respuestas[s.letra] === 'no');
@@ -107,21 +179,22 @@ export default function Page() {
       ) : (
         <>
           <Pregunta1
-            onSubmit={(res) => {
-              setRespuestasP1(res);
-              const todasNegativas = Object.values(res).every((r) => r === "no");
+             onSubmit={({ respuestas, otrasTexto }) => {
+
+              setRespuestasP1(respuestas);
+              const todasNegativas = Object.values(respuestas).every((r) => r === "no");
               console.log("########################")
               console.log(todasNegativas)
 
               console.log("########################")
-
+              setOtras(otrasTexto);
               if (todasNegativas) setMostrarFinal(true);
             }}
           />
 
           {respuestasP1 && (
             <Pregunta2
-              respuestasPregunta1={respuestasP1}
+              respuestasPregunta1={respuestasP1} otrasTexto={otras ?? ""}
               onSubmit={({ frecuencias, pasarADirecto }) => {
                 setFrecuenciasP2(frecuencias);
                 setSaltarP3aP5(pasarADirecto);
@@ -130,33 +203,33 @@ export default function Page() {
           )}
 
           {!saltarP3aP5 && frecuenciasP2 && (
-            <Pregunta3
+            <Pregunta3  otrasTexto={otras ?? ""}
               frecuenciasPregunta2={frecuenciasP2}
               onSubmit={(d) => setDeseosP3(d)}
             />
           )}
           {!saltarP3aP5 && deseosP3 && (
-            <Pregunta4
+            <Pregunta4  otrasTexto={otras ?? ""}
               frecuenciasPregunta2={frecuenciasP2!}
               onSubmit={(p) => setProblemasP4(p)}
             />
           )}
           {!saltarP3aP5 && problemasP4 && (
-            <Pregunta5
+            <Pregunta5  otrasTexto={otras ?? ""}
               frecuenciasPregunta2={frecuenciasP2!}
               onSubmit={(f) => setFallosP5(f)}
             />
           )}
 
           {frecuenciasP2 && (saltarP3aP5 || (deseosP3 && problemasP4 && fallosP5))  &&  (
-            <Pregunta6
+            <Pregunta6  otrasTexto={otras ?? ""}
               respuestasPregunta1={respuestasP1!}
               onSubmit={(res) => setPreocupacionesP6(res)}
             />
           )}
 
           {frecuenciasP2 && (
-            <Pregunta7
+            <Pregunta7  otrasTexto={otras ?? ""}
               respuestasPregunta1={respuestasP1!}
               onSubmit={(intentos) => setIntentosP7(intentos)}
             />
@@ -165,6 +238,9 @@ export default function Page() {
           {frecuenciasP2 && (
             <Pregunta8 onSubmit={(valor) => setRespuestaP8(valor)} />
           )}
+
+         <Resultados  otrasTexto={otras ?? ""}  resultados={resultados} />
+
         </>
       )}
     </AnimatePresence>

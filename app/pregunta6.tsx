@@ -18,6 +18,7 @@ const sustancias = [
 type Props = {
   respuestasPregunta1: Record<string, string>; // sustancias marcadas como "sí"
   onSubmit: (preocupaciones: Record<string, number>) => void;
+  otrasTexto:string;
 };
 
 const opciones = [
@@ -26,10 +27,10 @@ const opciones = [
   { label: 'Sí, pero no en los últimos 3 meses', value: 3 },
 ];
 
-export default function Pregunta6({ respuestasPregunta1, onSubmit }: Props) {
+export default function Pregunta6({ respuestasPregunta1, onSubmit,otrasTexto }: Props) {
   const [preocupaciones, setPreocupaciones] = useState<Record<string, number>>({});
 
-  const sustanciasRespondidas = sustancias.filter(
+  let  sustanciasRespondidas = sustancias.filter(
     (s) => respuestasPregunta1[s.letra] === 'si'
   );
 
@@ -42,7 +43,11 @@ export default function Pregunta6({ respuestasPregunta1, onSubmit }: Props) {
     (s) => preocupaciones[s.letra] !== undefined
   ); */
 
-
+  if (otrasTexto && sustanciasRespondidas.some((s) => s.letra === "j")) {
+    sustanciasRespondidas = sustanciasRespondidas.map((s) =>
+      s.letra === "j" ? { ...s, nombre: `Otras: ${otrasTexto}` } : s
+    );
+  }
   
     useEffect(() => {
       console.log( Object.values(preocupaciones))
@@ -79,7 +84,7 @@ export default function Pregunta6({ respuestasPregunta1, onSubmit }: Props) {
               <td key={op.value} className="border p-2 text-center">
                 <input
                   type="radio"
-                  name={`pregunta6-${s.letra}`}
+                  name={`pregunta6-2-${s.letra}`}
                   value={op.value}
                   checked={preocupaciones[s.letra] === op.value}
                   onChange={() => handleChange(s.letra, op.value)}
@@ -103,7 +108,7 @@ export default function Pregunta6({ respuestasPregunta1, onSubmit }: Props) {
             <label key={op.value} className="flex items-center gap-2 text-sm">
               <input
                 type="radio"
-                name={`pregunta6-${s.letra}`}
+                name={`pregunta6-1-${s.letra}`}
                 value={op.value}
                 checked={preocupaciones[s.letra] === op.value}
                 onChange={() => handleChange(s.letra, op.value)}

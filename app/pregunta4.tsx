@@ -18,6 +18,7 @@ const sustancias = [
 type Props = {
   frecuenciasPregunta2: Record<string, number>;
   onSubmit: (problemas: Record<string, number>) => void;
+  otrasTexto:string;
 };
 
 const opciones = [
@@ -28,10 +29,10 @@ const opciones = [
   { label: 'Diariamente o casi diariamente', value: 7 },
 ];
 
-export default function Pregunta4({ frecuenciasPregunta2, onSubmit }: Props) {
+export default function Pregunta4({ frecuenciasPregunta2, onSubmit,otrasTexto  }: Props) {
   const [problemas, setProblemas] = useState<Record<string, number>>({});
 
-  const sustanciasConConsumo = sustancias.filter(
+  let  sustanciasConConsumo = sustancias.filter(
     (s) => frecuenciasPregunta2[s.letra] && frecuenciasPregunta2[s.letra] > 0
   );
 
@@ -47,6 +48,12 @@ export default function Pregunta4({ frecuenciasPregunta2, onSubmit }: Props) {
   }, [problemas, onSubmit]);
 
 
+
+  if (otrasTexto && sustanciasConConsumo.some((s) => s.letra === "j")) {
+    sustanciasConConsumo = sustanciasConConsumo.map((s) =>
+      s.letra === "j" ? { ...s, nombre: `Otras: ${otrasTexto}` } : s
+    );
+  }
   return (
     <div className="max-w-5xl mx-auto p-6">
     <h2 className="text-2xl font-bold mb-4">PREGUNTA 4</h2>

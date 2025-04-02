@@ -27,12 +27,14 @@ const sustancias = [
 type Props = {
   frecuenciasPregunta2: Record<string, number>; // Ej: { a: 4, c: 0, e: 3 }
   onSubmit: (respuestas: Record<string, any>) => void;
+  otrasTexto:string;
+
 };
 
-export default function Pregunta3({ frecuenciasPregunta2,onSubmit }: Props) {
+export default function Pregunta3({ frecuenciasPregunta2,onSubmit,otrasTexto }: Props) {
   const [deseos, setDeseos] = useState<Record<string, number>>({});
 
-  const sustanciasConConsumo = sustancias.filter(
+  let  sustanciasConConsumo = sustancias.filter(
     (s) => frecuenciasPregunta2[s.letra] && frecuenciasPregunta2[s.letra] > 0
   );
 
@@ -51,6 +53,14 @@ export default function Pregunta3({ frecuenciasPregunta2,onSubmit }: Props) {
     } */
   }, [deseos, onSubmit]);
 
+  
+
+  if (otrasTexto && sustanciasConConsumo.some((s) => s.letra === "j")) {
+    sustanciasConConsumo = sustanciasConConsumo.map((s) =>
+      s.letra === "j" ? { ...s, nombre: `Otras: ${otrasTexto}` } : s
+    );
+  }
+  
 
   return (
     

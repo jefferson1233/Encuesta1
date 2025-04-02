@@ -18,6 +18,7 @@ const sustancias = [
 type Props = {
   respuestasPregunta1: Record<string, string>;
   onSubmit: (intentos: Record<string, number>) => void;
+  otrasTexto:string;
 };
 
 const opciones = [
@@ -26,10 +27,10 @@ const opciones = [
   { label: 'Sí, pero no en los últimos 3 meses', value: 3 },
 ];
 
-export default function Pregunta7({ respuestasPregunta1, onSubmit }: Props) {
+export default function Pregunta7({ respuestasPregunta1, onSubmit ,otrasTexto}: Props) {
   const [intentos, setIntentos] = useState<Record<string, number>>({});
 
-  const sustanciasUsadas = sustancias.filter(
+  let  sustanciasUsadas = sustancias.filter(
     (s) => respuestasPregunta1[s.letra] === 'si'
   );
 
@@ -38,7 +39,11 @@ export default function Pregunta7({ respuestasPregunta1, onSubmit }: Props) {
   };
 
 
-  
+  if (otrasTexto && sustanciasUsadas.some((s) => s.letra === "j")) {
+    sustanciasUsadas = sustanciasUsadas.map((s) =>
+      s.letra === "j" ? { ...s, nombre: `Otras: ${otrasTexto}` } : s
+    );
+  }
   
   useEffect(() => {
     console.log( Object.values(intentos))
@@ -74,7 +79,7 @@ export default function Pregunta7({ respuestasPregunta1, onSubmit }: Props) {
                 <td key={op.value} className="border p-2 text-center">
                   <input
                     type="radio"
-                    name={`pregunta7-${s.letra}`}
+                    name={`pregunta7-1-${s.letra}`}
                     value={op.value}
                     checked={intentos[s.letra] === op.value}
                     onChange={() => handleChange(s.letra, op.value)}
@@ -98,7 +103,7 @@ export default function Pregunta7({ respuestasPregunta1, onSubmit }: Props) {
               <label key={op.value} className="flex items-center gap-2 text-sm">
                 <input
                   type="radio"
-                  name={`pregunta7-${s.letra}`}
+                  name={`pregunta7-2-${s.letra}`}
                   value={op.value}
                   checked={intentos[s.letra] === op.value}
                   onChange={() => handleChange(s.letra, op.value)}
