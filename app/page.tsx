@@ -11,7 +11,7 @@ import Pregunta6 from './pregunta6';
 import Pregunta7 from './pregunta7';
 import Pregunta8 from './pregunta8';
 
-// @ts-expect-error
+   // @ts-expect-error
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 
