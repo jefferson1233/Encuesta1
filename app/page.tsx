@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+// @ts-expect-error
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -17,19 +18,24 @@ const sustancias = [
   { letra: "j", nombre: "Otras, especifique:" },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+
 export default function Home() {
-  const [respuestas, setRespuestas] = useState({});
+
+
+  const  [respuestas, setRespuestas] = useState <any>({});
   const [otras, setOtras] = useState("");
   const [mostrarFinal, setMostrarFinal] = useState(false);
 
-  const handleChange = (letra, valor) => {
-    setRespuestas(prev => ({
+  const handleChange = (letra: string, valor: string) => {
+    setRespuestas((prev: any) => ({
       ...prev,
       [letra]: valor,
     }));
   };
 
-  const todasRespondidas = sustancias.every(s => respuestas[s.letra]);
+  const todasRespondidas = sustancias.every(s => respuestas[s.letra] !== undefined);
   const todasNegativas = sustancias.every(s => respuestas[s.letra] === "no");
 
   useEffect(() => {
