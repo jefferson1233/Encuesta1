@@ -78,14 +78,14 @@ function calcularPuntajesASSIST(
 
 
 export default function Page() {
-  const [respuestasP1, setRespuestasP1] = useState<Record<string, string> | null>({});
-  const [frecuenciasP2, setFrecuenciasP2] = useState<Record<string, number> | null>({});
-  const [deseosP3, setDeseosP3] = useState<Record<string, number> | null>({});
-  const [problemasP4, setProblemasP4] = useState<Record<string, number> | null>({});
-  const [fallosP5, setFallosP5] = useState<Record<string, number> | null>({});
-  const [preocupacionesP6, setPreocupacionesP6] = useState<Record<string, number> | null>({});
-  const [intentosP7, setIntentosP7] = useState<Record<string, number> | null>({});
-  const [respuestaP8, setRespuestaP8] = useState<number | null>(0);
+  const [respuestasP1, setRespuestasP1] = useState<Record<string, string> >({});
+  const [frecuenciasP2, setFrecuenciasP2] = useState<Record<string, number> >({});
+  const [deseosP3, setDeseosP3] = useState<Record<string, number> >({});
+  const [problemasP4, setProblemasP4] = useState<Record<string, number>>({});
+  const [fallosP5, setFallosP5] = useState<Record<string, number> >({});
+  const [preocupacionesP6, setPreocupacionesP6] = useState<Record<string, number> >({});
+  const [intentosP7, setIntentosP7] = useState<Record<string, number> >({});
+  const [respuestaP8, setRespuestaP8] = useState<number >(0);
   const [saltarP3aP5, setSaltarP3aP5] = useState(false);
   const [otras, setOtras] = useState<string >("");
 
@@ -239,7 +239,7 @@ export default function Page() {
             <Pregunta8 onSubmit={(valor) => setRespuestaP8(valor)} />
           )}
 
-         <Resultados  otrasTexto={otras ?? ""}  resultados={resultados} />
+         <Resultados  otrasTexto={otras ?? ""} resultados={resultados} />
 
         </>
       )}

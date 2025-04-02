@@ -56,7 +56,7 @@ export default function Pregunta1({ onSubmit }: Props) {
     if (!respuestas || Object.keys(respuestas).length === 0) return;
   
     const todasRespondidas = sustancias.every((s) => respuestas[s.letra]);
-    const todasNegativas = sustancias.every((s) => respuestas[s.letra] === "no");
+ //   const todasNegativas = sustancias.every((s) => respuestas[s.letra] === "no");
   
     if (todasRespondidas || Object.values(respuestas).includes('si')) {
       onSubmit({ respuestas, otrasTexto: otras });

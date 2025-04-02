@@ -3,7 +3,7 @@
 
 import React from "react";
 
-let  sustancias = {
+const   sustancias = {
   a: "Productos de tabaco",
   b: "Bebidas alcohólicas",
   c: "Cannabis",

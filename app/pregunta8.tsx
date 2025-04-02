@@ -4,7 +4,6 @@ import { useState,useEffect } from 'react';
 
 type Props = {
   onSubmit: (valor: number) => void;
-  otrasTexto:string;
 };
 
 const opciones = [
@@ -13,7 +12,7 @@ const opciones = [
   { label: 'Sí, pero no en los últimos 3 meses', value: 3 },
 ];
 
-export default function Pregunta8({ onSubmit,otrasTexto }: Props) {
+export default function Pregunta8({ onSubmit }: Props) {
   const [respuesta, setRespuesta] = useState<number | null>(null);
 
   const handleChange = (valor: number) => {
