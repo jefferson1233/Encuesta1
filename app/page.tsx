@@ -1,6 +1,11 @@
 'use client';
 
 import { useState,useEffect } from 'react';
+
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "./lib/firebase";
+
+
 import Pregunta1 from './pregunta1';
 import Pregunta2 from './pregunta2';
 import Pregunta3 from './pregunta3';
@@ -117,8 +122,16 @@ export default function Page() {
         origin: { y: 0.6 },
       });
       setMostrarFinal(true);
+
+      guardarEnFirebase();
     }
-  }, [ mostrarFinal]);
+
+    if(respuestaP8){
+      
+      guardarEnFirebase();
+    }
+
+  }, [ mostrarFinal,respuestaP8]);
 
 
   const resultados = calcularPuntajesASSIST(
@@ -133,6 +146,37 @@ export default function Page() {
   //todasRespondidas && todasNegativas &&  todasRespondidas, todasNegativas, const todasRespondidas = sustancias.every((s) => respuestas[s.letra]);
   //const todasNegativas = sustancias.every((s) => respuestas[s.letra] === 'no');
   
+
+
+
+  const guardarEnFirebase = async () => {
+   // if (Object.keys(resultados).length === 0) return;
+    const sessionId = crypto.randomUUID(); // ID único
+    try {
+      await addDoc(collection(db, "assist_respuestas"), {
+        sessionId,
+        respuestasP1,
+        frecuenciasP2,
+        deseosP3,
+        problemasP4,
+        fallosP5,
+        preocupacionesP6,
+        intentosP7,
+        respuestaP8,
+        otras,
+        resultados,
+        fecha: new Date().toISOString(),
+      });
+      console.log("✅ Datos guardados en Firebase");
+    } catch (error) {
+      console.error("❌ Error al guardar en Firebase:", error);
+    }
+  };
+
+
+
+  
+
 
 
   return (
