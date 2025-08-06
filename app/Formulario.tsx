@@ -25,10 +25,12 @@ export default function FormularioDatos({ onSubmit }: Props) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+        onSubmit({ ...formData, [name]: value, edad: parseInt(name === 'edad' ? value : formData.edad, 10) });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        console.log()
         onSubmit({ ...formData, edad: parseInt(formData.edad, 10) });
     };
 

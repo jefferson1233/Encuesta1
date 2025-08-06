@@ -184,6 +184,8 @@ export default function Page() {
                 corta:respuestasViolencia.corta,
                 larga:respuestasViolencia.larga,
                 resultados,
+                resultadoParcial,
+                datosPersonales,
                 fecha: new Date().toISOString(),
             });
             console.log("✅ Datos guardados en Firebase");
@@ -202,7 +204,6 @@ export default function Page() {
 
     const [resultadoParcial, setResultadoParcial] = useState<ResultadoViolencia | null>(null);
 
-    const [cambios, setCambios] = useState<boolean>(false);
 
 
     /*
@@ -249,10 +250,13 @@ export default function Page() {
 
         if (completadas && !mostrarFinal) {
             setMostrarFinal(true);
-            guardarEnFirebase();
 
             const resultados = analizarWastViolencia(respuestasViolencia);
             setResultados(resultados);
+
+            console.log(datosPersonales)
+            guardarEnFirebase();
+
 
             confetti({
                 particleCount: 150,
@@ -260,7 +264,13 @@ export default function Page() {
                 origin: { y: 0.6 },
             });
         }
-    }, [respuestasViolencia]);
+
+        if(mostrarFinal){
+
+            guardarEnFirebase();
+
+        }
+    }, [respuestasViolencia, datosPersonales]);
 
 
 
@@ -288,10 +298,9 @@ export default function Page() {
                     console.log(respuestas)
 
 
-
                     setRespuestasViolencia((prev) => ({
                         ...prev,
-                        corta : respuestas, // ✅ CORRECTO
+                        corta: respuestas, // ✅ CORRECTO
                     }));
                 }}
             />
@@ -343,6 +352,8 @@ export default function Page() {
             )}
 
 
+
+
         </main>
     );
 }
@@ -375,6 +386,21 @@ function analizarWastViolencia(
 
 
 /*
+
+
+<!--
+            <button
+                onClick={() => {
+
+                    guardarEnFirebase();
+
+                }}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            >
+                Guardar   Encuesta
+            </button>
+
+
 *  onSubmit={({ respuestas }) => {
               setRespuestasViolencia((prev) => {
                 const actualizadas = { ...prev, corta: respuestas };

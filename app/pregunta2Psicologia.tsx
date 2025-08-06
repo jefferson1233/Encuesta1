@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const preguntas = [
     {
@@ -39,24 +39,9 @@ export default function WastCortoCL({ onSubmit }: Props) {
         setRespuestas(nuevasRespuestas);
         const total = Object.values(respuestas).reduce((acc, val) => acc + val, 0);
         const deteccionTemprana = total >= 3;
-
-        console.log(clave,valor)
-
-        console.log(nuevasRespuestas)
-        console.log(respuestas)
         onSubmit({ respuestas: nuevasRespuestas, total, deteccionTemprana });
 
     };
-  /*
-    useEffect(() => {
-        const todasRespondidas = preguntas.every((p) => respuestas[p.clave] !== undefined);
-        if (todasRespondidas) {
-            const total = Object.values(respuestas).reduce((acc, val) => acc + val, 0);
-            const deteccionTemprana = total >= 3;
-            onSubmit({ respuestas, total, deteccionTemprana });
-        }
-    }, [respuestas, onSubmit]);
-*/
 
 
     return (

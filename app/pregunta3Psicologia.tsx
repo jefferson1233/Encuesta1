@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const preguntas = [
     { clave: '3c', texto: 'Al terminar las discusiones, ¿usted se siente decaída o mal con usted misma?' },
@@ -34,14 +34,6 @@ export default function Pregunta3Psicologia({ onSubmit }: Props) {
 
     };
 
-    /*
-    useEffect(() => {
-        const todasRespondidas = preguntas.every((p) => respuestas[p.clave] !== undefined);
-        if (todasRespondidas) {
-            const total = Object.values(respuestas).reduce((acc, val) => acc + val, 0);
-            onSubmit({ respuestas, total });
-        }
-    }, [respuestas, onSubmit]); */
 
     return (
         <div className="max-w-5xl mx-auto p-6">
