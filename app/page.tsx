@@ -144,6 +144,7 @@ import { db } from "./lib/firebase";
 import confetti from "canvas-confetti";
 import Pregunta2_ from './pregunta2Psicologia';
 import Pregunta3_ from './pregunta3Psicologia';
+import FormularioDatos from "@/app/Formulario";
 
 type NivelViolencia = "Bajo" | "Sospecha Alta" | "Maltrato Confirmado";
 
@@ -162,6 +163,17 @@ export default function Page() {
     porcentaje: number;
     nivel: NivelViolencia;
   } | null>(null);
+
+
+    const [datosPersonales, setDatosPersonales] = useState<null | {
+        carrera: string;
+        edad: number;
+        curso: string;
+        sexo: string;
+        genero: string;
+    }>(null);
+
+
 
     const guardarEnFirebase = async () => {
         // if (Object.keys(resultados).length === 0) return;
@@ -237,7 +249,11 @@ export default function Page() {
           </p>
         </div>
 
-        <Pregunta2_
+          <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)} />
+
+
+
+          <Pregunta2_
             onSubmit={({ respuestas }) => {
               setRespuestasViolencia((prev) => {
                 const actualizadas = { ...prev, corta: respuestas };
