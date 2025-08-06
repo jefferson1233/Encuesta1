@@ -167,9 +167,10 @@ export default function Page() {
         // if (Object.keys(resultados).length === 0) return;
         const sessionId = crypto.randomUUID(); // ID único
         try {
-            await addDoc(collection(db, "assist_respuestas"), {
+            await addDoc(collection(db, "psicologia"), {
                 sessionId,
-                respuestasViolencia.corta,respuestasViolencia.larga
+                corta:respuestasViolencia.corta,
+                larga:respuestasViolencia.larga,
                 resultados,
                 fecha: new Date().toISOString(),
             });
@@ -191,6 +192,7 @@ export default function Page() {
 
     if (completadas && !mostrarFinal) {
       setMostrarFinal(true);
+      guardarEnFirebase();
     }
   }, [respuestasViolencia]);
 
