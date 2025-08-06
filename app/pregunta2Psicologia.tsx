@@ -35,9 +35,19 @@ export default function WastCortoCL({ onSubmit }: Props) {
     const [respuestas, setRespuestas] = useState<Record<string, number>>({});
 
     const handleChange = (clave: string, valor: number) => {
-        setRespuestas((prev) => ({ ...prev, [clave]: valor }));
-    };
+        const nuevasRespuestas = { ...respuestas, [clave]: valor };
+        setRespuestas(nuevasRespuestas);
+        const total = Object.values(respuestas).reduce((acc, val) => acc + val, 0);
+        const deteccionTemprana = total >= 3;
 
+        console.log(clave,valor)
+
+        console.log(nuevasRespuestas)
+        console.log(respuestas)
+        onSubmit({ respuestas: nuevasRespuestas, total, deteccionTemprana });
+
+    };
+  /*
     useEffect(() => {
         const todasRespondidas = preguntas.every((p) => respuestas[p.clave] !== undefined);
         if (todasRespondidas) {
@@ -46,7 +56,7 @@ export default function WastCortoCL({ onSubmit }: Props) {
             onSubmit({ respuestas, total, deteccionTemprana });
         }
     }, [respuestas, onSubmit]);
-
+*/
 
 
     return (

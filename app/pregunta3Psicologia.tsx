@@ -22,16 +22,26 @@ export default function Pregunta3Psicologia({ onSubmit }: Props) {
     const [respuestas, setRespuestas] = useState<Record<string, number>>({});
 
     const handleChange = (clave: string, valor: number) => {
-        setRespuestas((prev) => ({ ...prev, [clave]: valor }));
+        const nuevasRespuestas = { ...respuestas, [clave]: valor };
+        setRespuestas(nuevasRespuestas);
+
+        const total = Object.values(nuevasRespuestas).reduce((acc, val) => acc + val, 0);
+
+        console.log(total);
+        console.log(nuevasRespuestas);
+
+        onSubmit({ respuestas: nuevasRespuestas, total });
+
     };
 
+    /*
     useEffect(() => {
         const todasRespondidas = preguntas.every((p) => respuestas[p.clave] !== undefined);
         if (todasRespondidas) {
             const total = Object.values(respuestas).reduce((acc, val) => acc + val, 0);
             onSubmit({ respuestas, total });
         }
-    }, [respuestas, onSubmit]);
+    }, [respuestas, onSubmit]); */
 
     return (
         <div className="max-w-5xl mx-auto p-6">

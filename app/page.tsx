@@ -191,11 +191,27 @@ export default function Page() {
             console.error("❌ Error al guardar en Firebase:", error);
         }
     };
-
+    type ResultadoViolencia = {
+        total: number;
+        porcentaje: number;
+        nivel: 'Bajo' | 'Sospecha Alta' | 'Maltrato Confirmado'; // o enum NivelViolencia
+    };
 
   // Calcular resultados en tiempo real
-  const resultadoParcial = analizarWastViolencia(respuestasViolencia);
+  //const resultadoParcial = analizarWastViolencia(respuestasViolencia);
 
+    const [resultadoParcial, setResultadoParcial] = useState<ResultadoViolencia | null>(null);
+
+    const [cambios, setCambios] = useState<boolean>(false);
+
+
+    /*
+    useEffect(() => {
+        setResultadoParcial(analizarWastViolencia(respuestasViolencia));
+    }, [respuestasViolencia]);
+   */
+
+  /*
   // Detectar si ya se ha completado
   useEffect(() => {
     const completadas =
@@ -219,98 +235,135 @@ export default function Page() {
 
     setResultados(analizarWastViolencia(respuestasViolencia));
   }, [mostrarFinal, respuestasViolencia, resultados]);
+   */
 
-  return (
-      <main className="p-6 max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Encuesta de Prevención y Detección Temprana de Violencia de Pareja
-        </h1>
 
-        <p className="mb-4 text-gray-700">
-          Esta encuesta está diseñada para identificar posibles situaciones de violencia en las relaciones de pareja.
-          Sus respuestas serán tratadas con absoluta confidencialidad y utilizadas únicamente con fines de orientación,
-          prevención e intervención.
-        </p>
+    useEffect(() => {
+        const completadas =
+            Object.keys(respuestasViolencia.corta).length === 2 &&
+            Object.keys(respuestasViolencia.larga).length === 6;
 
-        <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
-          <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial.total} / 24</p>
-          <p><strong>📊 Porcentaje:</strong> {resultadoParcial.porcentaje}%</p>
-          <p>
-            <strong>⚠️ Nivel de riesgo:</strong>{" "}
-            <span className={
-              resultadoParcial.nivel === "Maltrato Confirmado"
-                  ? "text-red-600 font-bold"
-                  : resultadoParcial.nivel === "Sospecha Alta"
-                      ? "text-yellow-600 font-semibold"
-                      : "text-green-600"
-            }>
-            {resultadoParcial.nivel}
+        setResultadoParcial(analizarWastViolencia(respuestasViolencia));
+
+        console.log(respuestasViolencia)
+
+        if (completadas && !mostrarFinal) {
+            setMostrarFinal(true);
+            guardarEnFirebase();
+
+            const resultados = analizarWastViolencia(respuestasViolencia);
+            setResultados(resultados);
+
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 },
+            });
+        }
+    }, [respuestasViolencia]);
+
+
+
+    return (
+        <main className="p-6 max-w-4xl mx-auto">
+            <h1 className="text-2xl font-bold text-center mb-6">
+                Encuesta de Prevención y Detección Temprana de Violencia de Pareja
+            </h1>
+
+            <p className="mb-4 text-gray-700">
+                Esta encuesta está diseñada para identificar posibles situaciones de violencia en las relaciones de
+                pareja.
+                Sus respuestas serán tratadas con absoluta confidencialidad y utilizadas únicamente con fines de
+                orientación,
+                prevención e intervención.
+            </p>
+
+
+            <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)}/>
+
+
+            <Pregunta2_
+                onSubmit={({respuestas}) => {
+
+                    console.log(respuestas)
+
+
+
+                    setRespuestasViolencia((prev) => ({
+                        ...prev,
+                        corta : respuestas, // ✅ CORRECTO
+                    }));
+                }}
+            />
+
+            <Pregunta3_
+                onSubmit={({respuestas}) => {
+                    setRespuestasViolencia((prev) => ({
+                        ...prev,
+                        larga: respuestas, // ✅ CORRECTO
+                    }));
+                }}
+            />
+
+            <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
+                <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial?.total} / 24</p>
+                <p><strong>📊 Porcentaje:</strong> {resultadoParcial?.porcentaje}%</p>
+                <p>
+                    <strong>⚠️ Nivel de riesgo:</strong>{" "}
+                    <span className={
+                        !(resultadoParcial) || resultadoParcial.nivel === "Maltrato Confirmado"
+                            ? "text-red-600 font-bold"
+                            : resultadoParcial.nivel === "Sospecha Alta"
+                                ? "text-yellow-600 font-semibold"
+                                : "text-green-600"
+                    }>
+            {resultadoParcial?.nivel}
           </span>
-          </p>
-        </div>
+                </p>
+            </div>
 
-          <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)} />
-
-
-
-          <Pregunta2_
-            onSubmit={({ respuestas }) => {
-              setRespuestasViolencia((prev) => {
-                const actualizadas = { ...prev, corta: respuestas };
-                return actualizadas;
-              });
-            }}
-        />
-
-        <Pregunta3_
-            onSubmit={({ respuestas }) => {
-              setRespuestasViolencia((prev) => {
-                const actualizadas = { ...prev, larga: respuestas };
-                return actualizadas;
-              });
-            }}
-        />
-
-        {mostrarFinal && resultados && (
-            <div className="mt-6 p-4 bg-green-100 border rounded text-center">
-              <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
-              <p>Total: {resultados.total} / 24</p>
-              <p>Porcentaje: {resultados.porcentaje}%</p>
-              <p>
-                Nivel:{" "}
-                <span className={
-                  resultados.nivel === "Maltrato Confirmado"
-                      ? "text-red-600 font-bold"
-                      : resultados.nivel === "Sospecha Alta"
-                          ? "text-yellow-600 font-semibold"
-                          : "text-green-600"
-                }>
+            {mostrarFinal && resultados && (
+                <div className="mt-6 p-4 bg-green-100 border rounded text-center">
+                    <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
+                    <p>Total: {resultados.total} / 24</p>
+                    <p>Porcentaje: {resultados.porcentaje}%</p>
+                    <p>
+                        Nivel:{" "}
+                        <span className={
+                            resultados.nivel === "Maltrato Confirmado"
+                                ? "text-red-600 font-bold"
+                                : resultados.nivel === "Sospecha Alta"
+                                    ? "text-yellow-600 font-semibold"
+                                    : "text-green-600"
+                        }>
               {resultados.nivel}
             </span>
-              </p>
-            </div>
-        )}
-      </main>
-  );
+                    </p>
+                </div>
+            )}
+
+
+        </main>
+    );
 }
 
 // Función corregida
 function analizarWastViolencia(
     respuestas: { corta: Record<string, number>; larga: Record<string, number> }
 ): { total: number; porcentaje: number; nivel: NivelViolencia } {
-  const combinadas = { ...respuestas.corta, ...respuestas.larga };
-  const total = Object.values(combinadas).reduce((a, b) => a + b, 0);
-  const porcentaje = (total / 24) * 100;
+    const combinadas = {...respuestas.corta, ...respuestas.larga};
+    const total = Object.values(combinadas).reduce((a, b) => a + b, 0);
+    const porcentaje = (total / 24) * 100;
 
-  const f = combinadas["6f"];
-  const g = combinadas["7g"];
-  const h = combinadas["8h"];
+    const f = combinadas["6f"];
+    const g = combinadas["7g"];
+    const h = combinadas["8h"];
 
-  const casoConfirmado = (f && f !== 1) || (g && g !== 1) || (h && h !== 1);
-  const sospechaAlta = total >= 11 && f === 1 && g === 1 && h === 1;
+    const casoConfirmado = (f && f !== 1) || (g && g !== 1) || (h && h !== 1);
+    const sospechaAlta = total >= 11 && f === 1 && g === 1 && h === 1;
 
-  let nivel: NivelViolencia = "Bajo";
-  if (casoConfirmado) nivel = "Maltrato Confirmado";
+    let nivel: NivelViolencia = "Bajo";
+    if (casoConfirmado) nivel = "Maltrato Confirmado";
   else if (sospechaAlta) nivel = "Sospecha Alta";
 
   return {
@@ -319,3 +372,13 @@ function analizarWastViolencia(
     nivel,
   };
 }
+
+
+/*
+*  onSubmit={({ respuestas }) => {
+              setRespuestasViolencia((prev) => {
+                const actualizadas = { ...prev, corta: respuestas };
+                return actualizadas;
+              });
+            }}
+* */

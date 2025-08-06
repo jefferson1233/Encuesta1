@@ -33,7 +33,11 @@ export default function FormularioDatos({ onSubmit }: Props) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-4 p-4 border rounded shadow-sm bg-white text-sm space-y-3">
+
+        <form onSubmit={handleSubmit} >
+
+
+
             <h2 className="text-center font-semibold text-base mb-2">Información General</h2>
 
             <div className="space-y-1">
@@ -66,14 +70,17 @@ export default function FormularioDatos({ onSubmit }: Props) {
                 <input name="genero" value={formData.genero} onChange={handleChange} required className="w-full border px-2 py-1 rounded" />
             </div>
 
-            <button type="submit" className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700 transition text-sm">
-                Continuar
-            </button>
         </form>
     );
 }
 
 /*
+
+   <!--className="max-w-md mx-auto mt-4 p-4 border rounded shadow-sm bg-white text-sm space-y-3"-->
+            <!--
+            <button type="submit" className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700 transition text-sm">
+                Continuar
+            </button> -->
 'use client';
 
 import { useState } from 'react';
