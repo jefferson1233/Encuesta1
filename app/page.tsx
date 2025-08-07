@@ -145,6 +145,7 @@ import Pregunta2_ from './pregunta2Psicologia';
 import Pregunta3_ from './pregunta3Psicologia';
 import FormularioDatos from "@/app/Formulario";
 import Page2 from "@/app/page2";
+import FactoresRiesgoGenero from "@/app/factoresRiesgoGenero";
 
 type NivelViolencia = "Bajo" | "Sospecha Alta" | "Maltrato Confirmado";
 
@@ -447,6 +448,19 @@ export default function Page() {
             {/* Tab: Proyecto Violencia */}
             {tab === 'datos' && (
                 <>
+
+                    <FactoresRiesgoGenero onSubmit={({ respuestas }) => {
+                        setRespuestasViolencia((prev) => ({
+                            ...prev,
+                            factoresRiesgos:
+                        }));
+
+                    }
+
+
+                    >
+
+                    </FactoresRiesgoGenero>
                     <Pregunta2_
                         onSubmit={({ respuestas }) => {
                             console.log(respuestas);
