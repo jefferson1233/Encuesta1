@@ -46,8 +46,7 @@ export default function WastCortoCL({ onSubmit }: Props) {
 
     return (
         <div className="max-w-5xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-4">WAST Corto-CL (Detección Temprana)</h1>
-            <p className="mb-6 text-gray-700">Responda con sinceridad seleccionando la opción que más se ajuste a su situación.</p>
+            <p className="mb-6 text-gray-700"><b>Responda con sinceridad seleccionando la opción que más se ajuste a su situación.</b></p>
             <div className="space-y-6">
                 {preguntas.map((p) => (
                     <div key={p.clave} className="border-b pb-4">

@@ -37,8 +37,7 @@ export default function Pregunta3Psicologia({ onSubmit }: Props) {
 
     return (
         <div className="max-w-5xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-4">Cuestionario WAST Largo-CL (detección temprana)</h1>
-            <p className="mb-6 text-gray-700">Por favor, marque la opción que mejor describa su experiencia.</p>
+            <p className="mb-6 text-gray-700"><b>Por favor, marque la opción que mejor describa su experiencia.</b></p>
             <div className="space-y-6">
                 {preguntas.map((p) => (
                     <div key={p.clave} className="border-b pb-4">

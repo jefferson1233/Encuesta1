@@ -145,6 +145,7 @@ import confetti from "canvas-confetti";
 import Pregunta2_ from './pregunta2Psicologia';
 import Pregunta3_ from './pregunta3Psicologia';
 import FormularioDatos from "@/app/Formulario";
+import Page2 from "@/app/page2";
 
 type NivelViolencia = "Bajo" | "Sospecha Alta" | "Maltrato Confirmado";
 
@@ -156,6 +157,7 @@ export default function Page() {
     corta: {},
     larga: {},
   });
+    const [tab, setTab] = useState<'datos' | 'corta' | 'larga' | 'resultado'>('datos');
 
   const [mostrarFinal, setMostrarFinal] = useState(false);
   const [resultados, setResultados] = useState<{
@@ -289,7 +291,7 @@ export default function Page() {
     }, [respuestasViolencia, datosPersonales]);
 
 
-
+/*
     return (
         <main className="p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-center mb-6">
@@ -303,80 +305,214 @@ export default function Page() {
             </p>
 
 
+            <div className="flex justify-center space-x-4 mb-6">
+                <button
+                    className={`px-4 py-2 rounded ${tab === 'datos' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                    onClick={() => setTab('datos')}
+                >
+                    Proyecto de Prevención y Atención Primaria en Casos de Violencia y Acoso
+                </button>
+                <button
+                    className={`px-4 py-2 rounded ${tab === 'corta' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                    onClick={() => setTab('corta')}
+                    disabled={!datosPersonales}
+                >
 
+                    Prevención al Consumo de Drogas,
+                    Bebidas Alcohólicas, Cigarrillo y Derivados del Tabaco
+
+                </button>
+
+            </div>
 
 
             <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)}/>
 
-
-            <Pregunta2_
-                onSubmit={({respuestas}) => {
-
-                    console.log(respuestas)
+            {tab === 'datos' && (
 
 
-                    setRespuestasViolencia((prev) => ({
-                        ...prev,
-                        corta: respuestas, // ✅ CORRECTO
-                    }));
-                }}
-            />
+                <Pregunta2_
+                                onSubmit={({respuestas}) => {
+                                    console.log(respuestas)
+                                    setRespuestasViolencia((prev) => ({
+                                        ...prev,
+                                        corta: respuestas, // ✅ CORRECTO
+                                    }));
+                                             }}
+                       />
 
 
             {!mostrarLarga && (
 
                 <Pregunta3_
                 onSubmit={({respuestas}) => {
-                    setRespuestasViolencia((prev) => ({
-                        ...prev,
-                        larga: respuestas, // ✅ CORRECTO
-                    }));
-                }}
-            />
-            )}
+                setRespuestasViolencia((prev) => ({
+                ...prev,
+                larga: respuestas, // ✅ CORRECTO
+            }));
+            }}
+        />
+                    )}
 
-            <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
-                <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial?.total} / 24</p>
-                <p><strong>📊 Porcentaje:</strong> {resultadoParcial?.porcentaje}%</p>
-                <p>
-                    <strong>⚠️ Nivel de riesgo:</strong>{" "}
-                    <span className={
-                        !(resultadoParcial) || resultadoParcial.nivel === "Maltrato Confirmado"
-                            ? "text-red-600 font-bold"
-                            : resultadoParcial.nivel === "Sospecha Alta"
-                                ? "text-yellow-600 font-semibold"
-                                : "text-green-600"
-                    }>
+    <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
+        <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial?.total} / 24</p>
+        <p><strong>📊 Porcentaje:</strong> {resultadoParcial?.porcentaje}%</p>
+        <p>
+            <strong>⚠️ Nivel de riesgo:</strong>{" "}
+            <span className={
+                !(resultadoParcial) || resultadoParcial.nivel === "Maltrato Confirmado"
+                    ? "text-red-600 font-bold"
+                    : resultadoParcial.nivel === "Sospecha Alta"
+                        ? "text-yellow-600 font-semibold"
+                        : "text-green-600"
+            }>
             {resultadoParcial?.nivel}
           </span>
-                </p>
-            </div>
+        </p>
+    </div>
 
-            {mostrarFinal && resultados && (
-                <div className="mt-6 p-4 bg-green-100 border rounded text-center">
-                    <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
-                    <p>Total: {resultados.total} / 24</p>
-                    <p>Porcentaje: {resultados.porcentaje}%</p>
-                    <p>
-                        Nivel:{" "}
-                        <span className={
-                            resultados.nivel === "Maltrato Confirmado"
-                                ? "text-red-600 font-bold"
-                                : resultados.nivel === "Sospecha Alta"
-                                    ? "text-yellow-600 font-semibold"
-                                    : "text-green-600"
-                        }>
+    {mostrarFinal && resultados && (
+        <div className="mt-6 p-4 bg-green-100 border rounded text-center">
+            <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
+            <p>Total: {resultados.total} / 24</p>
+            <p>Porcentaje: {resultados.porcentaje}%</p>
+            <p>
+                Nivel:{" "}
+                <span className={
+                    resultados.nivel === "Maltrato Confirmado"
+                        ? "text-red-600 font-bold"
+                        : resultados.nivel === "Sospecha Alta"
+                            ? "text-yellow-600 font-semibold"
+                            : "text-green-600"
+                }>
               {resultados.nivel}
             </span>
-                    </p>
-                </div>
-            )}
+            </p>
+        </div>
+    )}
+
+
+
+
+
+
+)}
+
+            {tab === 'corta' && (
+
+        <Page2></Page2>
+
+
+    )}
+
+
+
+
+
 
 
 
 
         </main>
+    ); */
+
+    return (
+        <main className="p-6 max-w-4xl mx-auto">
+            <h1 className="text-2xl font-bold text-center mb-6">
+                Bienestar universitario y el nombre del proyecto: Carla (Proyecto de Prevención y Atención Primaria en Casos de Violencia y Acoso) y de Karen (Prevención al Consumo de Drogas,
+                Bebidas Alcohólicas, Cigarrillo y Derivados del Tabaco)
+            </h1>
+
+            {/* Tabs */}
+            <div className="flex justify-center space-x-4 mb-6">
+                <button
+                    className={`px-4 py-2 rounded ${tab === 'datos' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                    onClick={() => setTab('datos')}
+                >
+                    Proyecto de Violencia y Acoso
+                </button>
+                <button
+                    className={`px-4 py-2 rounded ${tab === 'corta' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+                    onClick={() => setTab('corta')}
+
+                >
+                    Prevención al Consumo
+                </button>
+            </div>
+
+            {/* Formulario siempre visible */}
+            <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)} />
+
+            {/* Tab: Proyecto Violencia */}
+            {tab === 'datos' && (
+                <>
+                    <Pregunta2_
+                        onSubmit={({ respuestas }) => {
+                            console.log(respuestas);
+                            setRespuestasViolencia((prev) => ({
+                                ...prev,
+                                corta: respuestas,
+                            }));
+                        }}
+                    />
+
+                    {!mostrarLarga && (
+                        <Pregunta3_
+                            onSubmit={({ respuestas }) => {
+                                setRespuestasViolencia((prev) => ({
+                                    ...prev,
+                                    larga: respuestas,
+                                }));
+                            }}
+                        />
+                    )}
+
+                    <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
+                        <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial?.total} / 24</p>
+                        <p><strong>📊 Porcentaje:</strong> {resultadoParcial?.porcentaje}%</p>
+                        <p>
+                            <strong>⚠️ Nivel de riesgo:</strong>{" "}
+                            <span className={
+                                !resultadoParcial || resultadoParcial.nivel === "Maltrato Confirmado"
+                                    ? "text-red-600 font-bold"
+                                    : resultadoParcial.nivel === "Sospecha Alta"
+                                        ? "text-yellow-600 font-semibold"
+                                        : "text-green-600"
+                            }>
+                            {resultadoParcial?.nivel}
+                        </span>
+                        </p>
+                    </div>
+
+                    {mostrarFinal && resultados && (
+                        <div className="mt-6 p-4 bg-green-100 border rounded text-center">
+                            <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
+                            <p>Total: {resultados.total} / 24</p>
+                            <p>Porcentaje: {resultados.porcentaje}%</p>
+                            <p>
+                                Nivel:{" "}
+                                <span className={
+                                    resultados.nivel === "Maltrato Confirmado"
+                                        ? "text-red-600 font-bold"
+                                        : resultados.nivel === "Sospecha Alta"
+                                            ? "text-yellow-600 font-semibold"
+                                            : "text-green-600"
+                                }>
+                                {resultados.nivel}
+                            </span>
+                            </p>
+                        </div>
+                    )}
+                </>
+            )}
+
+            {/* Tab: Prevención al Consumo */}
+            {tab === 'corta' && (
+                <Page2 />
+            )}
+        </main>
     );
+
 }
 
 // Función corregida
