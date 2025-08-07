@@ -43,6 +43,17 @@ type Resultado = {
     riesgo: NivelRiesgo;
 };
 
+
+type Props = {
+    datosPersonales: {
+        carrera: string;
+        edad: number;
+        curso: string;
+        sexo: string;
+        genero: string;
+    } | null;
+};
+
 type ResultadosFinales = Record<string, Resultado>;
 
 
@@ -79,7 +90,7 @@ function calcularPuntajesASSIST(
 }
 
 
-export default function Page2() {
+export default function Page2( { datosPersonales }: Props) {
     const [respuestasP1, setRespuestasP1] = useState<Record<string, string> >({});
     const [frecuenciasP2, setFrecuenciasP2] = useState<Record<string, number> >({});
     const [deseosP3, setDeseosP3] = useState<Record<string, number> >({});
@@ -163,6 +174,7 @@ const guardarEnFirebase = async () => {
             respuestaP8,
             otras,
             resultados,
+            datosPersonales,
             fecha: new Date().toISOString(),
         });
         console.log("✅ Datos guardados en Firebase");

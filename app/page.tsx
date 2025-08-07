@@ -141,7 +141,6 @@ import { db } from "./lib/firebase";
 
 
 
-import confetti from "canvas-confetti";
 import Pregunta2_ from './pregunta2Psicologia';
 import Pregunta3_ from './pregunta3Psicologia';
 import FormularioDatos from "@/app/Formulario";
@@ -276,11 +275,6 @@ export default function Page() {
             guardarEnFirebase();
 
 
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.6 },
-            });
         }
 
         if(mostrarFinal){
@@ -467,6 +461,36 @@ export default function Page() {
                         />
                     )}
 
+
+                    {mostrarLarga && !mostrarFinal && (
+                        <div className="text-center mt-6">
+                            <button
+                                onClick={() => {
+                                    const resultado = analizarWastViolencia(respuestasViolencia);
+                                    setResultados(resultado);
+                                    setMostrarFinal(true);
+                                    guardarEnFirebase();
+
+
+                                }}
+                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                            >
+                                Terminar Encuesta
+                            </button>
+                        </div>
+                    )}
+
+
+                    {mostrarFinal && (
+                        <div className="mt-6 p-4 bg-white border rounded shadow text-center">
+                            <h3 className="text-lg font-semibold text-green-700 mb-2">🎉 ¡Gracias por completar la encuesta!</h3>
+                            <p className="text-gray-600">
+                                Tu participación es muy valiosa para nuestro proyecto de prevención y bienestar universitario.
+                            </p>
+                        </div>
+                    )}
+
+
                     <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
                         <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial?.total} / 24</p>
                         <p><strong>📊 Porcentaje:</strong> {resultadoParcial?.porcentaje}%</p>
@@ -508,7 +532,7 @@ export default function Page() {
 
             {/* Tab: Prevención al Consumo */}
             {tab === 'corta' && (
-                <Page2 />
+                <Page2  datosPersonales={datosPersonales} />
             )}
         </main>
     );
