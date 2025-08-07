@@ -240,6 +240,8 @@ export default function Page() {
    */
 
     const [mostrarLarga, setMostrarLarga] = useState(true);
+    const [mostrarBoton, setMostrarBoton] = useState(false);
+
 
     useEffect(() => {
         const completadas =
@@ -251,9 +253,13 @@ export default function Page() {
 
            if( respuestasViolencia.corta['1a']==1 &&  respuestasViolencia.corta['2b']==1 ){
                setMostrarLarga(true)
+               setMostrarBoton(true)
+
+
             }
            else {
                setMostrarLarga(false)
+
 
            }
 
@@ -280,6 +286,7 @@ export default function Page() {
         if(mostrarFinal){
 
             guardarEnFirebase();
+            setMostrarLarga(true)
 
         }
     }, [respuestasViolencia, datosPersonales]);
@@ -447,6 +454,21 @@ export default function Page() {
                                 ...prev,
                                 corta: respuestas,
                             }));
+
+
+                            if(  Object.keys(respuestasViolencia.corta).length === 2){
+
+                                if( respuestasViolencia.corta['1a']==1 &&  respuestasViolencia.corta['2b']==1 ){
+
+                                    setRespuestasViolencia((prev) => ({
+                                        ...prev,
+                                        corta: respuestas,
+                                        larga: {},
+                                    }));
+
+                                }}
+
+
                         }}
                     />
 
@@ -462,7 +484,7 @@ export default function Page() {
                     )}
 
 
-                    {mostrarLarga && !mostrarFinal && (
+                    {mostrarLarga && mostrarBoton  && !mostrarFinal && (
                         <div className="text-center mt-6">
                             <button
                                 onClick={() => {
@@ -492,6 +514,10 @@ export default function Page() {
 
 
                     <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
+                        {mostrarFinal && (
+                            <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
+                        )}
+
                         <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial?.total} / 24</p>
                         <p><strong>📊 Porcentaje:</strong> {resultadoParcial?.porcentaje}%</p>
                         <p>
@@ -508,25 +534,8 @@ export default function Page() {
                         </p>
                     </div>
 
-                    {mostrarFinal && resultados && (
-                        <div className="mt-6 p-4 bg-green-100 border rounded text-center">
-                            <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
-                            <p>Total: {resultados.total} / 24</p>
-                            <p>Porcentaje: {resultados.porcentaje}%</p>
-                            <p>
-                                Nivel:{" "}
-                                <span className={
-                                    resultados.nivel === "Maltrato Confirmado"
-                                        ? "text-red-600 font-bold"
-                                        : resultados.nivel === "Sospecha Alta"
-                                            ? "text-yellow-600 font-semibold"
-                                            : "text-green-600"
-                                }>
-                                {resultados.nivel}
-                            </span>
-                            </p>
-                        </div>
-                    )}
+
+
                 </>
             )}
 
@@ -570,6 +579,27 @@ function analizarWastViolencia(
 
 
 <!--
+
+
+      {mostrarFinal && resultados && (
+                        <div className="mt-6 p-4 bg-green-100 border rounded text-center">
+                            <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
+                            <p>Total: {resultados.total} / 24</p>
+                            <p>Porcentaje: {resultados.porcentaje}%</p>
+                            <p>
+                                Nivel:{" "}
+                                <span className={
+                                    resultados.nivel === "Maltrato Confirmado"
+                                        ? "text-red-600 font-bold"
+                                        : resultados.nivel === "Sospecha Alta"
+                                            ? "text-yellow-600 font-semibold"
+                                            : "text-green-600"
+                                }>
+                                {resultados.nivel}
+                            </span>
+                            </p>
+                        </div>
+                    )}
             <button
                 onClick={() => {
 
