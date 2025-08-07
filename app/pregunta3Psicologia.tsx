@@ -54,7 +54,7 @@ export default function Pregunta3Psicologia({ onSubmit }: Props) {
                                     onChange={() => handleChange(p.clave, 3)}
                                     className="w-5 h-5"
                                 />
-                                Muchas veces (3)
+                                Muchas veces
                             </label>
                             <label className="flex items-center gap-2">
                                 <input
@@ -64,7 +64,7 @@ export default function Pregunta3Psicologia({ onSubmit }: Props) {
                                     onChange={() => handleChange(p.clave, 2)}
                                     className="w-5 h-5"
                                 />
-                                A veces (2)
+                                A veces
                             </label>
                             <label className="flex items-center gap-2">
                                 <input
@@ -74,7 +74,7 @@ export default function Pregunta3Psicologia({ onSubmit }: Props) {
                                     onChange={() => handleChange(p.clave, 1)}
                                     className="w-5 h-5"
                                 />
-                                Nunca (1)
+                                Nunca
                             </label>
                         </div>
                     </div>

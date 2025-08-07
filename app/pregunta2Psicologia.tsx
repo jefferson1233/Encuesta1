@@ -64,7 +64,7 @@ export default function WastCortoCL({ onSubmit }: Props) {
                                         onChange={() => handleChange(p.clave, op.valor)}
                                         className="w-5 h-5"
                                     />
-                                    {op.texto} ({op.valor})
+                                    {op.texto}
                                 </label>
                             ))}
                         </div>

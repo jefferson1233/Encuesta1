@@ -238,11 +238,27 @@ export default function Page() {
   }, [mostrarFinal, respuestasViolencia, resultados]);
    */
 
+    const [mostrarLarga, setMostrarLarga] = useState(true);
 
     useEffect(() => {
         const completadas =
             Object.keys(respuestasViolencia.corta).length === 2 &&
             Object.keys(respuestasViolencia.larga).length === 6;
+
+
+        if(  Object.keys(respuestasViolencia.corta).length === 2){
+
+           if( respuestasViolencia.corta['1a']==1 &&  respuestasViolencia.corta['2b']==1 ){
+               setMostrarLarga(true)
+            }
+           else {
+               setMostrarLarga(false)
+
+           }
+
+
+
+        }
 
         setResultadoParcial(analizarWastViolencia(respuestasViolencia));
 
@@ -277,16 +293,17 @@ export default function Page() {
     return (
         <main className="p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-center mb-6">
-                Encuesta de Prevención y Detección Temprana de Violencia de Pareja
+                Bienestar universitario y el nombre del proyecto: Carla (Proyecto de Prevención y Atención Primaria en Casos de Violencia y Acoso) y de Karen (  Prevención al Consumo de Drogas,
+                Bebidas Alcohólicas, Cigarrillo y Derivados del Tabaco
+
             </h1>
 
             <p className="mb-4 text-gray-700">
-                Esta encuesta está diseñada para identificar posibles situaciones de violencia en las relaciones de
-                pareja.
-                Sus respuestas serán tratadas con absoluta confidencialidad y utilizadas únicamente con fines de
-                orientación,
-                prevención e intervención.
+
             </p>
+
+
+
 
 
             <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)}/>
@@ -305,7 +322,10 @@ export default function Page() {
                 }}
             />
 
-            <Pregunta3_
+
+            {!mostrarLarga && (
+
+                <Pregunta3_
                 onSubmit={({respuestas}) => {
                     setRespuestasViolencia((prev) => ({
                         ...prev,
@@ -313,6 +333,7 @@ export default function Page() {
                     }));
                 }}
             />
+            )}
 
             <div className="mt-4 p-4 bg-gray-100 border rounded text-center">
                 <p><strong>🔢 Puntaje acumulado:</strong> {resultadoParcial?.total} / 24</p>
