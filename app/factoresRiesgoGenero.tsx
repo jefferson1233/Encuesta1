@@ -9,9 +9,31 @@ type Props = {
 export default function FactoresRiesgoGenero({ onSubmit }: Props) {
     const [respuestas, setRespuestas] = useState<Record<string, any>>({});
 
+
+    /*
     const handleChange = (key: string, value: any) => {
         setRespuestas((prev) => ({ ...prev, [key]: value }));
+
+        onSubmit(respuestas);
+
     };
+*/
+    const handleChange = (key: string, value: any) => {
+        setRespuestas(prev => {
+
+            onSubmit({ respuestas });
+
+
+            const next = { ...prev, [key]: value };
+            onSubmit(next);               // emite el estado NUEVO
+            return next;
+        });
+
+
+    };
+
+
+
 
     const handleCheckboxChange = (key: string, value: string) => {
         const current = respuestas[key] || [];
@@ -26,7 +48,7 @@ export default function FactoresRiesgoGenero({ onSubmit }: Props) {
     };
 
     return (
-        <div className="max-w-3xl mx-auto p-6 bg-white border rounded shadow">
+        <div className="max-w-3xl  p-6 bg-white   ">
             <h2 className="text-xl font-bold mb-4">Factores de Riesgo de Violencia de Género</h2>
 
             <div className="space-y-6">
@@ -122,7 +144,15 @@ export default function FactoresRiesgoGenero({ onSubmit }: Props) {
                 </div>
             </div>
 
-            <div className="mt-6 text-center">
+
+
+
+        </div>
+    );
+}
+
+/*
+ <div className="mt-6 text-center">
                 <button
                     onClick={handleSubmit}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
@@ -130,6 +160,4 @@ export default function FactoresRiesgoGenero({ onSubmit }: Props) {
                     Enviar respuestas
                 </button>
             </div>
-        </div>
-    );
-}
+* */

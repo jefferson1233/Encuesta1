@@ -139,6 +139,7 @@ import {
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "./lib/firebase";
 
+import crypto from 'crypto';
 
 
 import Pregunta2_ from './pregunta2Psicologia';
@@ -153,9 +154,12 @@ export default function Page() {
   const [respuestasViolencia, setRespuestasViolencia] = useState<{
     corta: Record<string, number>;
     larga: Record<string, number>;
+      factoresRiesgos: Record<string, number>;
+
   }>({
     corta: {},
     larga: {},
+      factoresRiesgos: {},
   });
     const [tab, setTab] = useState<'datos' | 'corta' | 'larga' | 'resultado'>('datos');
 
@@ -179,7 +183,29 @@ export default function Page() {
 
     const guardarEnFirebase = async () => {
         // if (Object.keys(resultados).length === 0) return;
-        const sessionId = crypto.randomUUID(); // ID único
+    //    const sessionId = crypto.randomUUID(); // ID único
+
+
+        let sessionId = sessionStorage.getItem('sessionId');
+
+        if (!sessionId) {
+            // Generar uno nuevo (si el navegador soporta randomUUID)
+            if (crypto.randomUUID) {
+                sessionId = crypto.randomUUID();
+            } else {
+                // Fallback para navegadores viejos
+                sessionId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                    const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15);
+                    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+                    return v.toString(16);
+                });
+            }
+
+            // Guardar para que dure toda la sesión
+            sessionStorage.setItem('sessionId', sessionId);
+        }
+
+
         try {
             await addDoc(collection(db, "psicologia"), {
                 sessionId,
@@ -256,39 +282,25 @@ export default function Page() {
                setMostrarLarga(true)
                setMostrarBoton(true)
 
-
             }
            else {
                setMostrarLarga(false)
-
-
            }
-
-
-
         }
-
         setResultadoParcial(analizarWastViolencia(respuestasViolencia));
-
         console.log(respuestasViolencia)
-
         if (completadas && !mostrarFinal) {
             setMostrarFinal(true);
-
             const resultados = analizarWastViolencia(respuestasViolencia);
             setResultados(resultados);
-
             console.log(datosPersonales)
             guardarEnFirebase();
-
-
         }
 
-        if(mostrarFinal){
 
+        if(mostrarFinal){
             guardarEnFirebase();
             setMostrarLarga(true)
-
         }
     }, [respuestasViolencia, datosPersonales]);
 
@@ -421,9 +433,18 @@ export default function Page() {
     return (
         <main className="p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-center mb-6">
-                Bienestar universitario y el nombre del proyecto: Carla (Proyecto de Prevención y Atención Primaria en Casos de Violencia y Acoso) y de Karen (Prevención al Consumo de Drogas,
-                Bebidas Alcohólicas, Cigarrillo y Derivados del Tabaco)
+                Bienestar universitario
             </h1>
+            <ul className="text-1xl font-bold text-center mb-6">
+                <li>
+                    Proyecto de Prevención y Atención Primaria en Casos de Violencia y Acoso
+                </li>
+                <li>
+                    Prevención al Consumo de Drogas,
+                    Bebidas Alcohólicas, Cigarrillo y Derivados del Tabaco
+                </li>
+            </ul>
+
 
             {/* Tabs */}
             <div className="flex justify-center space-x-4 mb-6">
@@ -443,87 +464,91 @@ export default function Page() {
             </div>
 
             {/* Formulario siempre visible */}
-            <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)} />
+            <FormularioDatos onSubmit={(datos) => setDatosPersonales(datos)}/>
 
             {/* Tab: Proyecto Violencia */}
             {tab === 'datos' && (
                 <>
 
-                    <FactoresRiesgoGenero onSubmit={({ respuestas }) => {
-                        setRespuestasViolencia((prev) => ({
-                            ...prev,
-                            factoresRiesgos:
-                        }));
-
-                    }
 
 
-                    >
-
-                    </FactoresRiesgoGenero>
-                    <Pregunta2_
-                        onSubmit={({ respuestas }) => {
-                            console.log(respuestas);
+                    <FactoresRiesgoGenero
+                        onSubmit={(respuestas) => {
+                            console.log(respuestas); // aquí sí será el objeto con todas las respuestas
                             setRespuestasViolencia((prev) => ({
                                 ...prev,
-                                corta: respuestas,
+                                factoresRiesgos: respuestas
                             }));
-
-
-                            if(  Object.keys(respuestasViolencia.corta).length === 2){
-
-                                if( respuestasViolencia.corta['1a']==1 &&  respuestasViolencia.corta['2b']==1 ){
-
-                                    setRespuestasViolencia((prev) => ({
-                                        ...prev,
-                                        corta: respuestas,
-                                        larga: {},
-                                    }));
-
-                                }}
-
-
                         }}
                     />
 
+
+
+                        <Pregunta2_
+                        onSubmit={({respuestas}) => {
+                        console.log(respuestas);
+                        setRespuestasViolencia((prev) => ({
+                        ...prev,
+                        corta: respuestas,
+                    }));
+
+
+                        if(  Object.keys(respuestasViolencia.corta).length === 2){
+
+                        if( respuestasViolencia.corta['1a']==1 &&  respuestasViolencia.corta['2b']==1 ){
+
+                        setRespuestasViolencia((prev) => ({
+                        ...prev,
+                        corta: respuestas,
+                        larga: {},
+                    }));
+
+                    }}
+
+
+                    }}
+                    />
+
                     {!mostrarLarga && (
-                        <Pregunta3_
-                            onSubmit={({ respuestas }) => {
-                                setRespuestasViolencia((prev) => ({
-                                    ...prev,
-                                    larga: respuestas,
-                                }));
-                            }}
-                        />
+                    <Pregunta3_
+                        onSubmit={({respuestas}) => {
+                            setRespuestasViolencia((prev) => ({
+                                ...prev,
+                                larga: respuestas,
+                            }));
+                        }}
+                    />
                     )}
 
 
                     {mostrarLarga && mostrarBoton  && !mostrarFinal && (
-                        <div className="text-center mt-6">
-                            <button
-                                onClick={() => {
-                                    const resultado = analizarWastViolencia(respuestasViolencia);
-                                    setResultados(resultado);
-                                    setMostrarFinal(true);
-                                    guardarEnFirebase();
+                    <div className="text-center mt-6">
+                        <button
+                            onClick={() => {
+                                const resultado = analizarWastViolencia(respuestasViolencia);
+                                setResultados(resultado);
+                                setMostrarFinal(true);
+                                guardarEnFirebase();
 
 
-                                }}
-                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                            >
-                                Terminar Encuesta
-                            </button>
-                        </div>
+                            }}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        >
+                            Terminar Encuesta
+                        </button>
+                    </div>
                     )}
 
 
                     {mostrarFinal && (
-                        <div className="mt-6 p-4 bg-white border rounded shadow text-center">
-                            <h3 className="text-lg font-semibold text-green-700 mb-2">🎉 ¡Gracias por completar la encuesta!</h3>
-                            <p className="text-gray-600">
-                                Tu participación es muy valiosa para nuestro proyecto de prevención y bienestar universitario.
-                            </p>
-                        </div>
+                    <div className="mt-6 p-4 bg-white border rounded shadow text-center">
+                        <h3 className="text-lg font-semibold text-green-700 mb-2"> ¡Gracias por completar la
+                            encuesta!</h3>
+                        <p className="text-gray-600">
+                            Tu participación es muy valiosa para nuestro proyecto de prevención y bienestar
+                            universitario.
+                        </p>
+                    </div>
                     )}
 
 
@@ -549,23 +574,28 @@ export default function Page() {
                     </div>
 
 
-
                 </>
             )}
 
             {/* Tab: Prevención al Consumo */}
             {tab === 'corta' && (
-                <Page2  datosPersonales={datosPersonales} />
+                <Page2 datosPersonales={datosPersonales}/>
             )}
         </main>
     );
 
 }
 
-// Función corregida
 function analizarWastViolencia(
-    respuestas: { corta: Record<string, number>; larga: Record<string, number> }
-): { total: number; porcentaje: number; nivel: NivelViolencia } {
+respuestas: {
+    corta: Record<string, number>;
+    larga: Record<string, number>
+}
+): {
+    total: number;
+    porcentaje: number;
+    nivel: NivelViolencia
+} {
     const combinadas = {...respuestas.corta, ...respuestas.larga};
     const total = Object.values(combinadas).reduce((a, b) => a + b, 0);
     const porcentaje = (total / 24) * 100;
@@ -589,47 +619,3 @@ function analizarWastViolencia(
 }
 
 
-/*
-
-
-<!--
-
-
-      {mostrarFinal && resultados && (
-                        <div className="mt-6 p-4 bg-green-100 border rounded text-center">
-                            <h2 className="text-xl font-bold mb-2">✅ Encuesta finalizada</h2>
-                            <p>Total: {resultados.total} / 24</p>
-                            <p>Porcentaje: {resultados.porcentaje}%</p>
-                            <p>
-                                Nivel:{" "}
-                                <span className={
-                                    resultados.nivel === "Maltrato Confirmado"
-                                        ? "text-red-600 font-bold"
-                                        : resultados.nivel === "Sospecha Alta"
-                                            ? "text-yellow-600 font-semibold"
-                                            : "text-green-600"
-                                }>
-                                {resultados.nivel}
-                            </span>
-                            </p>
-                        </div>
-                    )}
-            <button
-                onClick={() => {
-
-                    guardarEnFirebase();
-
-                }}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-            >
-                Guardar   Encuesta
-            </button>
-
-
-*  onSubmit={({ respuestas }) => {
-              setRespuestasViolencia((prev) => {
-                const actualizadas = { ...prev, corta: respuestas };
-                return actualizadas;
-              });
-            }}
-* */
