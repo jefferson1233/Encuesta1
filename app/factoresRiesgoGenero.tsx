@@ -43,7 +43,7 @@ export default function FactoresRiesgoGenero({ onSubmit }: Props) {
         setRespuestas((prev) => ({ ...prev, [key]: updated }));
     };
 
- 
+
 
     return (
         <div className="max-w-3xl  p-6 bg-white   ">
